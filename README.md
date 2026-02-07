@@ -21,7 +21,40 @@ To make things more simple, we consider that :
 - Every foreign key constraint needs to have an explicit name.
 - The ON DELETE option **should not** be used.
 
-### 2. Insert the following information into the database (see annex) :
+### 2. Insert the following information into the database (see annex bellow) :
+- Loan : 2005, 2006, 2007, 2009, 2013, 2014, 2015, 2019 and 2020.
+- Section : Science, Litterature, Computer Science, History, Medecine, Arts and Administration.
+- Employee : 1, 2, 3, 9, 14, 15 and 17.
+- Acquisition : 3001, 3002, 3003.
+- Document : Advanced databases, Introduction to SQL, Algorithms, Distributed Systems.
+- **IMPORTANT** : Add any other entry that would cause issues due to foreign constraints even if they are explicitly mentionned.
+
+### 3. Delete the following entries from the database : 
+- Loan : 2005
+- Employee : 2,3
+
+If one or more deletions fail (nt), explain why (comment in the .sql file).
+
+### 4. Add a **Loan_date** field in the Loan table.
+This field will have the current date as the default value. (DD/MM/YYYY).
+
+
+### 5. With a SQL request, change the name of the document **after the creation of the table**
+**"Distributed Systems"** in the Documents table should be renamed to **"SysDistrib"**.
+- Explain why this request does not work.
+- Suggest a solution that allows the name to be changed while maintenaing the coherence of the database.
+
+### 6. In a table, display the total number of lent books by their title.
+For example, if a document has been lent 1 time with a quantity of 3 and another time with a quantity of 2, the result will be 5.
+This table needs to display the title, loan quantity and the langage of the document.
+
+### 7. Display the sections that had no loan.
+### 8. Display the names of the employees who work in a section that loaned less than 2 different documents.
+### 9. Increase the salaries of all the employees who earn less than 60 000$.
+### 10. Delete all tables without causing errors. DO NOT USE DROP DATABASE.
+
+## Format
+All the code should be located in **one** .sql file.
 
 ## Annex
 **Editor table**
