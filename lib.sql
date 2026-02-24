@@ -120,3 +120,16 @@ INSERT INTO Editeur (No_editeur, Nom_editeur) VALUES
 (20, 'OReilly'),
 (30, 'Springer'),
 (40, 'Dunod');
+
+-- 3. suppression des donnes
+DELETE FROM Pret WHERE No_Pret=2005;
+
+DELETE FROM No_employe WHERE No_employe=2;
+DELETE FROM No_employe WHERE No_employe=3;
+-- echec parce que : ....
+
+--4 Ajout de colonnes
+ALTER TABLE Pret
+ADD Date_pret Date SET DATEFORMAT dmy;
+
+
