@@ -165,10 +165,19 @@ UPDATE Acquisition SET Titre_document='SysDitib' WHERE Titre_document='Systemes 
 ALTER TABLE Pret ADD CONSTRAINT FK_Pret_Document FOREIGN KEY (Titre_document) REFERENCES Document(Titre_document);
 ALTER TABLE Acquisition ADD CONSTRAINT FK_Acquisition_Document FOREIGN KEY(Titre_document) REFERENCES Document(Titre_document);
 
+-- 6. Afficher prets total par titre
+SELECT Titre_document, SUM(Quantite_pretee) AS Total_pret FROM Pret GROUP BY Titre_document;
 
+-- 7. afficher section ayant 0 prets
+-- se fait avec un left join.
+SELECT Section.Nom_section 
+FROM Section 
+LEFT JOIN Pret 
+ON Section.Nom_section = Pret.Nom_section 
+WHERE Pret.Nom_section IS NULL;
 
---Continue here--
-EXEC sp_keys Pret;
+-- 8 Afficher employes qui travaillent dans une section ayant pretes moins de 2 documents differnets.
+
 
 SELECT * FROM Employe;
 SELECT * FROM Section;
