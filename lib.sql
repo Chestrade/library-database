@@ -1,4 +1,4 @@
---DROP DATABASE IF EXISTS biblio;
+DROP DATABASE IF EXISTS biblio;
 --GO
 --CREATE DATABASE biblio;
 --GO
@@ -8,69 +8,73 @@
 
 -- 1. Creation de tables
 
---DROP TABLE IF EXISTS Pret;
---DROP TABLE IF EXISTS Document;
---DROP TABLE IF EXISTS Section;
---DROP TABLE IF EXISTS Editeur;
---DROP TABLE IF EXISTS Acquisition;
---DROP TABLE IF EXISTS Employe;
+DROP TABLE IF EXISTS Pret;
+DROP TABLE IF EXISTS Document;
+DROP TABLE IF EXISTS Section;
+DROP TABLE IF EXISTS Editeur;
+DROP TABLE IF EXISTS Acquisition;
+DROP TABLE IF EXISTS Employe;
 --GO
 
+ALTER TABLE Employe DROP CONSTRAINT No_employe;
 
--- CREATE TABLE Document(
---     Titre_document VARCHAR(255) NOT NULL PRIMARY KEY,
---     Type_document VARCHAR(32) NOT NULL,
---     Langue_Document VARCHAR(32) NOT NULL
--- );
+CREATE TABLE Document(
+    Titre_document VARCHAR(255) NOT NULL PRIMARY KEY,
+    Type_document VARCHAR(32) NOT NULL,
+    Langue_Document VARCHAR(32) NOT NULL
+);
 
--- CREATE TABLE Section(
---     Nom_section VARCHAR(255) NOT NULL PRIMARY KEY,
---     Numero_etage int NOT NULL,
---     Numero_telephone Decimal(10,0) NOT NULL,
---     No_chef_equipe int
+
+CREATE TABLE Section(
+    Nom_section VARCHAR(255) NOT NULL PRIMARY KEY,
+    Numero_etage int NOT NULL,
+    Numero_telephone Decimal(10,0) NOT NULL,
+    No_chef_equipe int
     
--- );
+);
 
--- CREATE TABLE Employe(
---     No_employe int NOT NULL PRIMARY KEY,
---     Nom VARCHAR(255) NOT NULL,
---     Salaire Decimal(5,0),
---     Nom_section VARCHAR(255) 
--- );
+CREATE TABLE Employe(
+    No_employe int NOT NULL PRIMARY KEY,
+    Nom VARCHAR(255) NOT NULL,
+    Salaire Decimal(5,0),
+    Nom_section VARCHAR(255) 
+);
 
--- CREATE TABLE Pret(
---     No_Pret int NOT NULL PRIMARY KEY,
---     Quantite_pretee int CHECK (Quantite_pretee >= 1),
---     Titre_document VARCHAR(255),
---     Nom_section VARCHAR(255)
--- );
+CREATE TABLE Pret(
+    No_Pret int NOT NULL PRIMARY KEY,
+    Quantite_pretee int CHECK (Quantite_pretee >= 1),
+    Titre_document VARCHAR(255),
+    Nom_section VARCHAR(255)
+);
 
--- CREATE TABLE Acquisition(
---     No_Acquisition int NOT NULL PRIMARY KEY,
---     Quantite_acquise int,
---     Titre_document VARCHAR(255),
---     Nom_section VARCHAR(255),
---     No_editeur int
--- );
+CREATE TABLE Acquisition(
+    No_Acquisition int NOT NULL PRIMARY KEY,
+    Quantite_acquise int,
+    Titre_document VARCHAR(255),
+    Nom_section VARCHAR(255),
+    No_editeur int
+);
  
--- CREATE TABLE Editeur(
---     No_editeur int NOT NULL PRIMARY KEY,
---     Nom_editeur VARCHAR(255)
+CREATE TABLE Editeur(
+    No_editeur int NOT NULL PRIMARY KEY,
+    Nom_editeur VARCHAR(255)
 
--- );
+);
 
 GO
 -- Ajout des foreign keys
-ALTER TABLE Pret ADD FOREIGN KEY (Titre_document) REFERENCES Document(Titre_document);
-ALTER TABLE Pret ADD FOREIGN KEY (Nom_section) REFERENCES Section(Nom_section);
+ALTER TABLE Pret ADD CONSTRAINT FK_Pret_Document FOREIGN KEY (Titre_document) REFERENCES Document(Titre_document);
+ALTER TABLE Pret ADD CONSTRAINT FK_Pret_Section FOREIGN KEY (Nom_section) REFERENCES Section(Nom_section);
 
-ALTER TABLE Acquisition ADD FOREIGN KEY(Titre_document) REFERENCES Document(Titre_document);
-ALTER TABLE Acquisition ADD FOREIGN KEY(Nom_section) REFERENCES Section(Nom_section);
-ALTER TABLE Acquisition ADD FOREIGN KEY(No_editeur) REFERENCES Editeur(No_editeur);
+ALTER TABLE Acquisition ADD CONSTRAINT FK_Acquisition_Document FOREIGN KEY(Titre_document) REFERENCES Document(Titre_document);
+ALTER TABLE Acquisition ADD CONSTRAINT FK_Acquisition_Section FOREIGN KEY(Nom_section) REFERENCES Section(Nom_section);
+ALTER TABLE Acquisition ADD CONSTRAINT FK_Acquisition_Editeur FOREIGN KEY(No_editeur) REFERENCES Editeur(No_editeur);
 
-ALTER TABLE Section ADD FOREIGN KEY(No_chef_equipe) REFERENCES Employe(No_employe);
-ALTER TABLE Employe ADD FOREIGN KEY(Nom_section) REFERENCES Section(Nom_section);
+ALTER TABLE Section ADD CONSTRAINT FK_Section_Employe FOREIGN KEY(No_chef_equipe) REFERENCES Employe(No_employe);
+ALTER TABLE Employe ADD CONSTRAINT FK_Employe_Section FOREIGN KEY(Nom_section) REFERENCES Section(Nom_section);
 GO
+
+
 
 -- 2 .Inserstion des données
 INSERT INTO Document(Titre_document, Type_document, Langue_Document) VALUES 
@@ -78,6 +82,15 @@ INSERT INTO Document(Titre_document, Type_document, Langue_Document) VALUES
 ('Introduction a SQL', 'Livre', 'Francais'),
 ('Algorithmique', 'Livre', 'Francais'),
 ('Systemes distribues', 'Livre', 'Anglais');
+
+INSERT INTO Section(Nom_section, Numero_etage, Numero_telephone, No_chef_equipe) VALUES 
+('Sciences', 1, 5141111111, NULL),
+('Lettres', 2, 5142222222, NULL),
+('Informatique', 3, 5143333333, NULL),
+('Histoire', 4, 5144444444, NULL),
+('Medecine', 5, 5145555555, NULL),
+('Arts', 6, 5146666666, NULL),
+('Administration', 7, 5147777777, NULL);
 
 INSERT INTO Employe(No_employe, Nom, Salaire, Nom_section) VALUES 
 (1, 'Tremblay', 62000, 'Sciences'),
@@ -88,14 +101,6 @@ INSERT INTO Employe(No_employe, Nom, Salaire, Nom_section) VALUES
 (15, 'Lefebvre', 55000, 'Arts'),
 (17, 'Moreau', 72000, 'Administration');
 
-INSERT INTO Section(Nom_section, Numero_etage, Numero_telephone, No_chef_equipe) VALUES 
-('Sciences', 1, 5141111111, NULL),
-('Lettres', 2, 5142222222, NULL),
-('Informatique', 3, 5143333333, NULL),
-('Histoire', 4, 5144444444, NULL),
-('Medecine', 5, 5145555555, NULL),
-('Arts', 6, 5146666666, NULL),
-('Administration', 7, 5147777777, NULL);
 
 UPDATE Section SET No_chef_equipe = 1 WHERE Nom_section = 'Sciences';
 UPDATE Section SET No_chef_equipe = 2 WHERE Nom_section = 'Lettres';
@@ -116,6 +121,12 @@ INSERT INTO Pret (No_Pret, Quantite_pretee, Titre_document, Nom_section) VALUES
 (2019, 1, 'Algorithmique', 'Sciences'),
 (2020, 1, 'Systemes distribues', 'Informatique');
 
+INSERT INTO Editeur (No_editeur, Nom_editeur) VALUES 
+(10, 'Pearson'),
+(20, 'OReilly'),
+(30, 'Springer'),
+(40, 'Dunod');
+
 INSERT INTO Acquisition (No_Acquisition, Quantite_acquise, Titre_document, Nom_section, No_editeur) VALUES 
 (30001, 10, 'Base de donnees avancees', 'Informatique', 30),
 (30002, 8, 'Introduction a SQL', 'Informatique', 20),
@@ -123,11 +134,7 @@ INSERT INTO Acquisition (No_Acquisition, Quantite_acquise, Titre_document, Nom_s
 (30004, 5, 'Systemes distribues', 'Informatique', 30),
 (30005, 4, 'Algorithmique', 'Sciences', 10);
 
-INSERT INTO Editeur (No_editeur, Nom_editeur) VALUES 
-(10, 'Pearson'),
-(20, 'OReilly'),
-(30, 'Springer'),
-(40, 'Dunod');
+
 
 -- 3. suppression des donnes
 DELETE FROM Pret WHERE No_Pret=2005;
@@ -139,6 +146,7 @@ DELETE FROM Employe WHERE No_employe=3;
 -- --4 Ajout de colonnes
 ALTER TABLE Pret
 ADD Date_pret Date SET DATEFORMAT dmy;
+
 UPDATE Pret SET Date_Pret = GETDATE();
 
 --5. Changement de nom de document
@@ -147,11 +155,20 @@ UPDATE Document SET Titre_document='SysDistib' WHERE Titre_document='Systemes di
 --De plus, Système distribues se retourve déjà dans plusieurs tableaux.
 
 --Solution alternative
-INSERT INTO Document (Titre_document, Type_document, Langue_Document) VALUES ('SysDistrib', 'Livre', 'Anglais');
-UPDATE Pret SET Titre_document ='SysDistrib' WHERE Titre_document='Systemes distribues';
-UPDATE Acquisition SET Titre_document ='SysDistrib' WHERE Titre_document='Systemes distribues';
---Continue here--
+ALTER TABLE Pret DROP CONSTRAINT FK_Pret_Document;
+ALTER TABLE Acquisition DROP CONSTRAINT FK_Acquisition_Document;
 
+UPDATE Document SET Titre_document='SysDitib' WHERE Titre_document='Systemes distribues';
+UPDATE Pret SET Titre_document='SysDitib' WHERE Titre_document='Systemes distribues';
+UPDATE Acquisition SET Titre_document='SysDitib' WHERE Titre_document='Systemes distribues';
+
+ALTER TABLE Pret ADD CONSTRAINT FK_Pret_Document FOREIGN KEY (Titre_document) REFERENCES Document(Titre_document);
+ALTER TABLE Acquisition ADD CONSTRAINT FK_Acquisition_Document FOREIGN KEY(Titre_document) REFERENCES Document(Titre_document);
+
+
+
+--Continue here--
+EXEC sp_keys Pret;
 
 SELECT * FROM Employe;
 SELECT * FROM Section;
