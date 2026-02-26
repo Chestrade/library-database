@@ -141,6 +141,18 @@ ALTER TABLE Pret
 ADD Date_pret Date SET DATEFORMAT dmy;
 UPDATE Pret SET Date_Pret = GETDATE();
 
+--5. Changement de nom de document
+UPDATE Document SET Titre_document='SysDistib' WHERE Titre_document='Systemes distribues';
+--Ne fonctionne pas car Titre_document est une clé étrangère dans plusieurs autres tableau. 
+--De plus, Système distribues se retourve déjà dans plusieurs tableaux.
+
+--Solution alternative
+INSERT INTO Document (Titre_document, Type_document, Langue_Document) VALUES ('SysDistrib', 'Livre', 'Anglais');
+UPDATE Pret SET Titre_document ='SysDistrib' WHERE Titre_document='Systemes distribues';
+UPDATE Acquisition SET Titre_document ='SysDistrib' WHERE Titre_document='Systemes distribues';
+--Continue here--
+
+
 SELECT * FROM Employe;
 SELECT * FROM Section;
 SELECT * FROM Document;
