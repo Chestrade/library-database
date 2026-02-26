@@ -1,63 +1,63 @@
-DROP DATABASE IF EXISTS biblio;
-GO
-CREATE DATABASE biblio;
-GO
-USE biblio;
-GO
+--DROP DATABASE IF EXISTS biblio;
+--GO
+--CREATE DATABASE biblio;
+--GO
+--USE biblio;
+--GO
 
 
 -- 1. Creation de tables
 
-DROP TABLE IF EXISTS Pret;
-DROP TABLE IF EXISTS Document;
-DROP TABLE IF EXISTS Section;
-DROP TABLE IF EXISTS Editeur;
-DROP TABLE IF EXISTS Acquisition;
-DROP TABLE IF EXISTS Employe;
-GO
+--DROP TABLE IF EXISTS Pret;
+--DROP TABLE IF EXISTS Document;
+--DROP TABLE IF EXISTS Section;
+--DROP TABLE IF EXISTS Editeur;
+--DROP TABLE IF EXISTS Acquisition;
+--DROP TABLE IF EXISTS Employe;
+--GO
 
 
-CREATE TABLE Document(
-    Titre_document VARCHAR(255) NOT NULL PRIMARY KEY,
-    Type_document VARCHAR(32) NOT NULL,
-    Langue_Document VARCHAR(32) NOT NULL
-);
+-- CREATE TABLE Document(
+--     Titre_document VARCHAR(255) NOT NULL PRIMARY KEY,
+--     Type_document VARCHAR(32) NOT NULL,
+--     Langue_Document VARCHAR(32) NOT NULL
+-- );
 
-CREATE TABLE Section(
-    Nom_section VARCHAR(255) NOT NULL PRIMARY KEY,
-    Numero_etage int NOT NULL,
-    Numero_telephone Decimal(10,0) NOT NULL,
-    No_chef_equipe int
+-- CREATE TABLE Section(
+--     Nom_section VARCHAR(255) NOT NULL PRIMARY KEY,
+--     Numero_etage int NOT NULL,
+--     Numero_telephone Decimal(10,0) NOT NULL,
+--     No_chef_equipe int
     
-);
+-- );
 
-CREATE TABLE Employe(
-    No_employe int NOT NULL PRIMARY KEY,
-    Nom VARCHAR(255) NOT NULL,
-    Salaire Decimal(5,0),
-    Nom_section VARCHAR(255) 
-);
+-- CREATE TABLE Employe(
+--     No_employe int NOT NULL PRIMARY KEY,
+--     Nom VARCHAR(255) NOT NULL,
+--     Salaire Decimal(5,0),
+--     Nom_section VARCHAR(255) 
+-- );
 
-CREATE TABLE Pret(
-    No_Pret int NOT NULL PRIMARY KEY,
-    Quantite_pretee int CHECK (Quantite_pretee >= 1),
-    Titre_document VARCHAR(255),
-    Nom_section VARCHAR(255)
-);
+-- CREATE TABLE Pret(
+--     No_Pret int NOT NULL PRIMARY KEY,
+--     Quantite_pretee int CHECK (Quantite_pretee >= 1),
+--     Titre_document VARCHAR(255),
+--     Nom_section VARCHAR(255)
+-- );
 
-CREATE TABLE Acquisition(
-    No_Acquisition int NOT NULL PRIMARY KEY,
-    Quantite_acquise int,
-    Titre_document VARCHAR(255),
-    Nom_section VARCHAR(255),
-    No_editeur int
-);
+-- CREATE TABLE Acquisition(
+--     No_Acquisition int NOT NULL PRIMARY KEY,
+--     Quantite_acquise int,
+--     Titre_document VARCHAR(255),
+--     Nom_section VARCHAR(255),
+--     No_editeur int
+-- );
  
-CREATE TABLE Editeur(
-    No_editeur int NOT NULL PRIMARY KEY,
-    Nom_editeur VARCHAR(255)
+-- CREATE TABLE Editeur(
+--     No_editeur int NOT NULL PRIMARY KEY,
+--     Nom_editeur VARCHAR(255)
 
-);
+-- );
 
 GO
 -- Ajout des foreign keys
@@ -89,13 +89,21 @@ INSERT INTO Employe(No_employe, Nom, Salaire, Nom_section) VALUES
 (17, 'Moreau', 72000, 'Administration');
 
 INSERT INTO Section(Nom_section, Numero_etage, Numero_telephone, No_chef_equipe) VALUES 
-('Sciences', 1, 5141111111, 1),
-('Lettres', 2, 5142222222, 2),
-('Informatique', 3, 5143333333, 2),
-('Histoire', 4, 5144444444, 2),
-('Medecine', 5, 5145555555, 1),
-('Arts', 6, 5146666666, 15),
-('Administration', 7, 5147777777, 17);
+('Sciences', 1, 5141111111, NULL),
+('Lettres', 2, 5142222222, NULL),
+('Informatique', 3, 5143333333, NULL),
+('Histoire', 4, 5144444444, NULL),
+('Medecine', 5, 5145555555, NULL),
+('Arts', 6, 5146666666, NULL),
+('Administration', 7, 5147777777, NULL);
+
+UPDATE Section SET No_chef_equipe = 1 WHERE Nom_section = 'Sciences';
+UPDATE Section SET No_chef_equipe = 2 WHERE Nom_section = 'Lettres';
+UPDATE Section SET No_chef_equipe = 3 WHERE Nom_section = 'Informatique';
+UPDATE Section SET No_chef_equipe = 9 WHERE Nom_section = 'Histoire';
+UPDATE Section SET No_chef_equipe = 14 WHERE Nom_section = 'Medecine';
+UPDATE Section SET No_chef_equipe = 15 WHERE Nom_section = 'Arts';
+UPDATE Section SET No_chef_equipe = 17 WHERE Nom_section = 'Administration';
 
 INSERT INTO Pret (No_Pret, Quantite_pretee, Titre_document, Nom_section) VALUES 
 (2005, 2, 'Base de donnees avancees', 'Informatique'),
@@ -124,12 +132,18 @@ INSERT INTO Editeur (No_editeur, Nom_editeur) VALUES
 -- 3. suppression des donnes
 DELETE FROM Pret WHERE No_Pret=2005;
 
-DELETE FROM No_employe WHERE No_employe=2;
-DELETE FROM No_employe WHERE No_employe=3;
--- echec parce que : ....
+DELETE FROM Employe WHERE No_employe=2;
+DELETE FROM Employe WHERE No_employe=3;
+-- Echec de supression car les employes 2 et 3 sont des FOREIGN KEYS de la table Section.
 
---4 Ajout de colonnes
+-- --4 Ajout de colonnes
 ALTER TABLE Pret
 ADD Date_pret Date SET DATEFORMAT dmy;
+UPDATE Pret SET Date_Pret = GETDATE();
 
-
+SELECT * FROM Employe;
+SELECT * FROM Section;
+SELECT * FROM Document;
+SELECT * FROM Acquisition;
+SELECT * FROM Pret;
+SELECT * FROM Editeur;
