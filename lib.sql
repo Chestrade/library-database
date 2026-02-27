@@ -1,12 +1,11 @@
+
+-- 1. CRÉATION DE LA BASE DE DONNÉES ET DES TABLEAUX
 DROP DATABASE IF EXISTS biblio;
---GO
---CREATE DATABASE biblio;
---GO
---USE biblio;
---GO
-
-
--- 1. Creation de tables
+GO
+CREATE DATABASE biblio;
+GO
+USE biblio;
+GO
 
 DROP TABLE IF EXISTS Pret;
 DROP TABLE IF EXISTS Document;
@@ -14,7 +13,6 @@ DROP TABLE IF EXISTS Section;
 DROP TABLE IF EXISTS Editeur;
 DROP TABLE IF EXISTS Acquisition;
 DROP TABLE IF EXISTS Employe;
---GO
 
 CREATE TABLE Document(
     Titre_document VARCHAR(255) NOT NULL PRIMARY KEY,
@@ -74,7 +72,8 @@ GO
 
 
 
--- 2 .Inserstion des données
+-- 2 INSERTION DES ENREGISTREMENTS
+GO
 INSERT INTO Document(Titre_document, Type_document, Langue_Document) VALUES 
 ('Base de donnees avancees', 'Livre', 'Francais'),
 ('Introduction a SQL', 'Livre', 'Francais'),
@@ -134,20 +133,20 @@ INSERT INTO Acquisition (No_Acquisition, Quantite_acquise, Titre_document, Nom_s
 
 
 
--- 3. suppression des donnes
+-- 3. SUPRESSION DES ENREGISTREMENTS
 DELETE FROM Pret WHERE No_Pret=2005;
 
 DELETE FROM Employe WHERE No_employe=2;
 DELETE FROM Employe WHERE No_employe=3;
 -- Echec de supression car les employes 2 et 3 sont des FOREIGN KEYS de la table Section.
 
--- --4 Ajout de colonnes
+-- 4. AJOUT DU CHANT DATE_PRET
 ALTER TABLE Pret
 ADD Date_pret Date SET DATEFORMAT dmy;
 
 UPDATE Pret SET Date_Pret = GETDATE();
 
---5. Changement de nom de document
+-- 5. CHANGEMENT DE NOM DU DOCUMENT
 UPDATE Document SET Titre_document='SysDistib' WHERE Titre_document='Systemes distribues';
 --Ne fonctionne pas car Titre_document est une clé étrangère dans plusieurs autres tableau. 
 --De plus, Système distribues se retourve déjà dans plusieurs tableaux.
@@ -163,10 +162,10 @@ UPDATE Acquisition SET Titre_document='SysDitib' WHERE Titre_document='Systemes 
 ALTER TABLE Pret ADD CONSTRAINT FK_Pret_Document FOREIGN KEY (Titre_document) REFERENCES Document(Titre_document);
 ALTER TABLE Acquisition ADD CONSTRAINT FK_Acquisition_Document FOREIGN KEY(Titre_document) REFERENCES Document(Titre_document);
 
--- 6. Afficher prets total par titre
+-- 6. AFFICHER LE NOMBRE TOTAL DE DOC PRETES PAR TITRE
 SELECT Titre_document, SUM(Quantite_pretee) AS Total_pret FROM Pret GROUP BY Titre_document;
 
--- 7. afficher section ayant 0 prets
+-- 7. AFFICHER LES SECTION AYANT AUCUN PRET
 -- se fait avec un left join.
 SELECT Section.Nom_section 
 FROM Section 
@@ -174,18 +173,18 @@ LEFT JOIN Pret
 ON Section.Nom_section = Pret.Nom_section 
 WHERE Pret.Nom_section IS NULL;
 
--- 8 Afficher employes qui travaillent dans une section ayant pretes moins de 2 documents differnets.
+-- 8 AFFICHER LE NOM DES EMPLOYES QUI TRAVAILLENT DANS UNE SECTION AYANT PRETE MOINS DE 2 DOCUMENTS
 GO
 SELECT Nom, Nom_section FROM Employe
 WHERE Nom_section IN (SELECT Nom_section FROM Pret WHERE Quantite_pretee < 2);
 GO
 
--- 9 Augmenter salaire de 15% de ceux qui gagnent moins de 60000
+-- 9 AUGMENTER LE SALAIRE DE 15% DES EMPLOYES GAGNANT MOINS DE 60000$
 UPDATE Employe
 SET Salaire = Salaire * 1.15 WHERE Salaire < 60000;
 GO
 
--- 10 supression des tables
+-- 10 SUPRESSION DES TABLEAUX ET DE LA BASE DE DONNÉE
 ALTER TABLE Pret DROP CONSTRAINT FK_Pret_Document;
 ALTER TABLE Pret DROP CONSTRAINT FK_Pret_Section;
 DROP TABLE Pret;
@@ -204,14 +203,6 @@ DROP TABLE Section;
 DROP TABLE Document;
 DROP TABLE Editeur;
 
-
-
-SELECT * FROM Employe;
-SELECT * FROM Pret;
-SELECT * FROM Section;
-SELECT * FROM Document;
-SELECT * FROM Acquisition;
-SELECT * FROM Editeur;
-
+DROP DATABASE IF EXISTS biblio;
 
 
