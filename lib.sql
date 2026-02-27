@@ -16,8 +16,6 @@ DROP TABLE IF EXISTS Acquisition;
 DROP TABLE IF EXISTS Employe;
 --GO
 
-ALTER TABLE Employe DROP CONSTRAINT No_employe;
-
 CREATE TABLE Document(
     Titre_document VARCHAR(255) NOT NULL PRIMARY KEY,
     Type_document VARCHAR(32) NOT NULL,
@@ -177,11 +175,43 @@ ON Section.Nom_section = Pret.Nom_section
 WHERE Pret.Nom_section IS NULL;
 
 -- 8 Afficher employes qui travaillent dans une section ayant pretes moins de 2 documents differnets.
+GO
+SELECT Nom, Nom_section FROM Employe
+WHERE Nom_section IN (SELECT Nom_section FROM Pret WHERE Quantite_pretee < 2);
+GO
+
+-- 9 Augmenter salaire de 15% de ceux qui gagnent moins de 60000
+UPDATE Employe
+SET Salaire = Salaire * 1.15 WHERE Salaire < 60000;
+GO
+
+-- 10 supression des tables
+ALTER TABLE Pret DROP CONSTRAINT FK_Pret_Document;
+ALTER TABLE Pret DROP CONSTRAINT FK_Pret_Section;
+DROP TABLE Pret;
+
+ALTER TABLE Acquisition DROP CONSTRAINT FK_Acquisition_Editeur;
+ALTER TABLE Acquisition DROP CONSTRAINT FK_Acquisition_Document;
+ALTER TABLE Acquisition DROP CONSTRAINT FK_Acquisition_Section;
+DROP TABLE Acquisition;
+
+ALTER TABLE Employe DROP CONSTRAINT FK_Employe_Section;
+ALTER TABLE Section DROP CONSTRAINT FK_Section_Employe;
+
+DROP TABLE Employe;
+DROP TABLE Section;
+
+DROP TABLE Document;
+DROP TABLE Editeur;
+
 
 
 SELECT * FROM Employe;
+SELECT * FROM Pret;
 SELECT * FROM Section;
 SELECT * FROM Document;
 SELECT * FROM Acquisition;
-SELECT * FROM Pret;
 SELECT * FROM Editeur;
+
+
+
